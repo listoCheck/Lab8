@@ -31,7 +31,7 @@ public class Client implements Serializable {
         int retries = 0;
         NewDragon newDragon = new NewDragon();
         boolean flag2 = false;
-        Client.clientSocket = new Socket("localhost", 6789); // этой строкой мы запрашиваем
+        clientSocket = new Socket("localhost", 6789); // этой строкой мы запрашиваем
         RegisterApplication registerApplication = new RegisterApplication();
         registerApplication.main();
     }

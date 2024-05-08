@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static java.lang.Math.max;
+import static java.lang.Math.pow;
+
 public class TableController {
     @FXML
     private TextField commandText;
@@ -109,7 +112,6 @@ public class TableController {
     private TextField typeField;
 
 
-
     @FXML
     private Button updateButton;
 
@@ -138,7 +140,10 @@ public class TableController {
         userColumn.setCellValueFactory(new PropertyValueFactory<lab5.Client.Types.Dragon, String>("user"));
         Client.out.write("show\n");
         Client.out.flush();
-        for (String i : Client.in.readLine().split("::")) {
+        String serverout = Client.in.readLine();
+        System.out.println(serverout);
+        addPoint(123, Color.GREEN, 0, 0);
+        for (String i : serverout.split("::")) {
             System.out.println(i);
             if (!i.isEmpty()) {
                 Dragon dragon = makeDragon(i);
@@ -148,9 +153,9 @@ public class TableController {
             }
         }
     }
-    private Dragon makeDragon(String data){
+
+    private Dragon makeDragon(String data) {
         Integer id = Integer.valueOf(data.split(" ")[1].split(",")[0]);
-        maxNumber = id;
         String name = (data.split(", ")[1].split(": ")[1]);
         Double x = Double.valueOf((data.split(", ")[2].split(": ")[1]));
         Double y = Double.valueOf((data.split(", ")[3].split(": ")[1]));
@@ -161,18 +166,20 @@ public class TableController {
         String character = (data.split(", ")[8].split(": ")[1]);
         Integer cave = Integer.valueOf((data.split(", ")[9].split(": ")[1]));
         String user = (data.split(", ")[10].split(": ")[1]);
+        maxNumber = id;
+        addPoint(id, Color.valueOf(color), (int) (Double.parseDouble(String.valueOf(x))), (int) (Double.parseDouble(String.valueOf(y))));
         lab5.Client.Types.Dragon dragon = new lab5.Client.Types.Dragon(id, name, x, y, date, age, color, type, character, cave, user);
         return dragon;
     }
+
     public void addPoint(int id, Color color, int x, int y) {
         pointColors.put(id, color);
         pointXCoordinates.put(id, x);
         pointYCoordinates.put(id, y);
     }
+
     @FXML
-    void draw(){
-        addPoint(1, Color.RED, 100, 100);
-        addPoint(2, Color.YELLOW, 200, -100);
+    void draw() {
         Canvas canvas = new Canvas(800, 600);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         for (int id : pointColors.keySet()) {
@@ -189,10 +196,13 @@ public class TableController {
         primaryStage.setTitle("2D Map");
         primaryStage.show();
     }
+
     private void drawPoint(GraphicsContext gc, Color color, double x, double y) {
         gc.setFill(color);
-        gc.fillOval(x, y, 5, 5); // Adjust size as needed
+        gc.fillOval((x + 400), (300 - y), 5, 5); // Adjust size as needed
+        gc.fillText(Client.login + " " + x + " " + y, x+400, (300 - y));
     }
+
     @FXML
     void submit(ActionEvent event) throws IOException {
         serverOut.clear();
@@ -269,13 +279,14 @@ public class TableController {
         }
         tableView.refresh();
     }
+
     @FXML
     void rowClicked(MouseEvent event) {
         Dragon clickedDragon = tableView.getSelectionModel().getSelectedItem();
         idField.setText(String.valueOf(clickedDragon.getId()));
         nameField.setText(String.valueOf(clickedDragon.getName()));
-        xFileld.setText(String.valueOf(clickedDragon.getX()));
-        yField.setText(String.valueOf(clickedDragon.getY()));
+        xFileld.setText(String.valueOf((int) Double.parseDouble(String.valueOf(clickedDragon.getX()))));
+        yField.setText(String.valueOf((int) Double.parseDouble(String.valueOf(clickedDragon.getY()))));
         ageField.setText(String.valueOf(clickedDragon.getAge()));
         colorField.setText(String.valueOf(clickedDragon.getColor()));
         typeField.setText(String.valueOf(clickedDragon.getType()));
@@ -285,7 +296,7 @@ public class TableController {
         String[] content = {"ID: ", "name: ", "x: ", "y: ", "creationdate: ", "age: ", "color: ", "type: ", "character: ", "cave: ", "user"};
         String[] type_of_content = {"Вводится автоматически", "Введите имя дракона", "Координата х, где находится драков", "Координата у, где находится драков", "Вводится автоматически", "Возраст дракона, больший нуля", "Цвет дракона из предложенных: RED, YELLOW, BROWN", "Тип дракона из предложенных: WATER, UNDERGROUND, AIR, FIRE", "Какой Ваш дракон: CUNNING, EVIL, CHAOTIC_EVIL, FICKLE", "Глубина шахты, в которой обитает дракон, большая, либо равная нулю"};
         String answer = "";
-        for (int i = 0; i < 9; i++){
+        for (int i = 0; i <= 9; i++) {
             answer += content[i] + type_of_content[i] + '\n';
         }
         serverOut.setText(answer);
@@ -295,21 +306,25 @@ public class TableController {
     void insert(ActionEvent event) throws IOException {
         Pattern pattern = Pattern.compile("[^a-zA-Z0-9а-яА-Я\\s]");
         String insert_dragon = "";
-        insert_dragon += pattern.matcher(nameField.getText()).replaceAll("")+",";
-        insert_dragon += xFileld.getText()+",";
-        insert_dragon += yField.getText()+",";
+        insert_dragon += pattern.matcher(nameField.getText()).replaceAll("") + ",";
+        insert_dragon += xFileld.getText() + ",";
+        insert_dragon += yField.getText() + ",";
         insert_dragon += currentTime + ",";
-        insert_dragon += ageField.getText()+",";
-        insert_dragon += colorField.getText()+",";
-        insert_dragon += typeField.getText()+",";
-        insert_dragon += characterField.getText()+",";
-        insert_dragon += caveField.getText()+",";
-        Dragon dragon = new Dragon(maxNumber++, nameField.getText(), Double.parseDouble(xFileld.getText()), Double.parseDouble(yField.getText()), currentTime.toString(), Integer.parseInt(ageField.getText()), colorField.getText(), typeField.getText(), characterField.getText(), Integer.parseInt(caveField.getText()), Client.login);
+        insert_dragon += ageField.getText() + ",";
+        insert_dragon += colorField.getText() + ",";
+        insert_dragon += typeField.getText() + ",";
+        insert_dragon += characterField.getText() + ",";
+        insert_dragon += caveField.getText() + ",";
+        //maxNumber = 0;
+        if (tableView.getItems().isEmpty()){
+            maxNumber = 1;
+        }
+        Dragon dragon = new Dragon(++maxNumber, nameField.getText(), Double.parseDouble(xFileld.getText()), Double.parseDouble(yField.getText()), currentTime.toString(), Integer.parseInt(ageField.getText()), colorField.getText(), typeField.getText(), characterField.getText(), Integer.parseInt(caveField.getText()), Client.login);
         int i = 0;
         String message = "";
-        for(String part : insert_dragon.split(",")){
+        for (String part : insert_dragon.split(",")) {
             String output = new ComandCheck().check(i, part);
-            if (output.contains("Ошибка: ")){
+            if (output.contains("Ошибка: ")) {
                 message += output + '\n';
             }
             i++;
@@ -318,41 +333,48 @@ public class TableController {
         else serverOut.setText(message);
         String values = "";
         for (i = 0; i <= 8; i++) {
-            values += insert_dragon.split(",")[i] + ",;;;,";
+            if (i == 1 || i == 2) values += (int) Double.parseDouble(String.valueOf(insert_dragon.split(",")[i])) + ",;;;,";
+            else values += insert_dragon.split(",")[i] + ",;;;,";
         }
-        System.out.println(values);
-        Client.out.write("insert :::" + values+'\n');
+        //System.out.println("insert :::" + values+'\n');
+        Client.out.write("insert :::" + values + Client.login + '\n');
+        System.out.println("insert :::" + values + Client.login);
         Client.out.flush();
         String server = Client.in.readLine();
-        if (server.equals("Дракон создан")){
+        if (server.equals("Дракон создан")) {
             ObservableList<lab5.Client.Types.Dragon> customers = tableView.getItems();
             customers.add(dragon);
             tableView.setItems(customers);
         }
-        Client.in = new BufferedReader(new InputStreamReader(Client.clientSocket.getInputStream()));
-        Client.out = new BufferedWriter(new OutputStreamWriter(Client.clientSocket.getOutputStream()));
         tableView.refresh();
+        int field;
+        if (idField.getText().isEmpty()){
+            field = 1;
+        }else{
+            field = Integer.parseInt(idField.getText()) + 1;
+        }
+        addPoint(field, Color.valueOf(colorField.getText()), (int) (Double.parseDouble(String.valueOf(xFileld.getText()))), (int) (Double.parseDouble(String.valueOf(yField.getText()))));
     }
 
     @FXML
     void update(ActionEvent event) throws IOException {
         Pattern pattern = Pattern.compile("[^a-zA-Z0-9а-яА-Я\\s]");
         String insert_dragon = "";
-        insert_dragon += pattern.matcher(nameField.getText()).replaceAll("")+",";
-        insert_dragon += xFileld.getText()+",";
-        insert_dragon += yField.getText()+",";
+        insert_dragon += pattern.matcher(nameField.getText()).replaceAll("") + ",";
+        insert_dragon += xFileld.getText() + ",";
+        insert_dragon += yField.getText() + ",";
         insert_dragon += currentTime + ",";
-        insert_dragon += ageField.getText()+",";
-        insert_dragon += colorField.getText()+",";
-        insert_dragon += typeField.getText()+",";
-        insert_dragon += characterField.getText()+",";
-        insert_dragon += caveField.getText()+",";
+        insert_dragon += ageField.getText() + ",";
+        insert_dragon += colorField.getText() + ",";
+        insert_dragon += typeField.getText() + ",";
+        insert_dragon += characterField.getText() + ",";
+        insert_dragon += caveField.getText() + ",";
         Dragon dragon = new Dragon(Integer.parseInt(idField.getText()), nameField.getText(), Double.parseDouble(xFileld.getText()), Double.parseDouble(yField.getText()), currentTime.toString(), Integer.parseInt(ageField.getText()), colorField.getText(), typeField.getText(), characterField.getText(), Integer.parseInt(caveField.getText()), Client.login);
         int i = 0;
         String message = "";
-        for(String part : insert_dragon.split(",")){
+        for (String part : insert_dragon.split(",")) {
             String output = new ComandCheck().check(i, part);
-            if (output.contains("Ошибка: ")){
+            if (output.contains("Ошибка: ")) {
                 message += output + '\n';
             }
             i++;
@@ -363,37 +385,44 @@ public class TableController {
         for (i = 0; i <= 8; i++) {
             values += insert_dragon.split(",")[i] + ",;;;,";
         }
-        System.out.println(values);
-        Client.out.write("update :::" + values+'\n');
+        Client.out.write("update " + idField.getText() + " :::" + values + Client.login + "\n");
+        //System.out.println("update " + idField.getText()+ " :::" + values + Client.login + "\n");
         Client.out.flush();
         String server = Client.in.readLine();
-        System.out.println(server);
+        serverOut.setText(server);
         ObservableList<lab5.Client.Types.Dragon> customers = tableView.getItems();
-        customers.remove(Integer.parseInt(idField.getText()) - 1);
-        customers.add(Integer.parseInt(idField.getText()) - 1, dragon);
-        tableView.setItems(customers);
-        Client.in = new BufferedReader(new InputStreamReader(Client.clientSocket.getInputStream()));
-        Client.out = new BufferedWriter(new OutputStreamWriter(Client.clientSocket.getOutputStream()));
+        if (userField.getText().equals(Client.login)) {
+            customers.removeIf(drag -> drag.getId() == Integer.parseInt(idField.getText()));
+            if (tableView.getItems().isEmpty()){
+                customers.add(dragon);
+            }else {
+                customers.add(Integer.parseInt(idField.getText()), dragon);
+            }
+            tableView.setItems(customers);
+        }
         tableView.refresh();
+        addPoint(Integer.parseInt(idField.getText()), Color.valueOf(colorField.getText()), (int) (Double.parseDouble(String.valueOf(xFileld.getText()))), (int) (Double.parseDouble(String.valueOf(yField.getText()))));
     }
 
     @FXML
     void deleat(ActionEvent event) throws IOException {
         ObservableList<lab5.Client.Types.Dragon> customers = tableView.getItems();
-        //System.out.println(customers.get(Integer.parseInt(idField.getText())-1));
-        customers.remove(Integer.parseInt(idField.getText())-1);
-        tableView.setItems(customers);
-        Client.out.write("remove " + idField.getText()+'\n');
-        Client.out.flush();
-        System.out.println(Client.in.readLine());
+        if (userField.getText().equals(Client.login)) {
+            customers.removeIf(drag -> drag.getId() == Integer.parseInt(idField.getText()));
+            tableView.setItems(customers);
+            Client.out.write("remove " + idField.getText() + '\n');
+            Client.out.flush();
+            System.out.println(Client.in.readLine());
+        }
         tableView.refresh();
     }
+
     @FXML
     void fieldClicked(MouseEvent event) {
         String[] content = {"ID: ", "name: ", "x: ", "y: ", "creationdate: ", "age: ", "color: ", "type: ", "character: ", "cave: ", "user"};
         String[] type_of_content = {"Вводится автоматически", "Введите имя дракона", "Координата х, где находится драков", "Координата у, где находится драков", "Вводится автоматически", "Возраст дракона, больший нуля", "Цвет дракона из предложенных: RED, YELLOW, BROWN", "Тип дракона из предложенных: WATER, UNDERGROUND, AIR, FIRE", "Какой Ваш дракон: CUNNING, EVIL, CHAOTIC_EVIL, FICKLE", "Глубина шахты, в которой обитает дракон, большая, либо равная нулю"};
         String answer = "";
-        for (int i = 0; i < 9; i++){
+        for (int i = 0; i <= 9; i++) {
             answer += content[i] + type_of_content[i] + '\n';
         }
         serverOut.setText(answer);

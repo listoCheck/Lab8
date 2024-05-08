@@ -23,15 +23,15 @@ public class ComandCheck {
         }  if (id == 1) { // x
             try {
                 int x = (int) Double.parseDouble(data);
-                System.out.println(x);
+                //System.out.println(x);
             } catch (NumberFormatException e) {
-                System.out.println("значение x должно быть integer");
+                //System.out.println("значение x должно быть integer");
                 return "Ошибка: значение x должно быть integer";
             }
         }  if (id == 2) { // y
             try {
                 int y = (int) Double.parseDouble(data);
-                System.out.println(y);
+                //System.out.println(y);
             } catch (NumberFormatException e) {
                 System.out.println("значение y должно быть integer");
                 return "Ошибка: значение y должно быть integer";

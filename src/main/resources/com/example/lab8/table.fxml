@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: #046611; -fx-border-color: #09ff00;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab8.TableController">
+<AnchorPane maxHeight="650.0" maxWidth="900.0" minHeight="650.0" minWidth="900.0" prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: #046611; -fx-border-color: #09ff00;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab8.TableController">
     <children>
         <TableView fx:id="tableView" layoutX="15.0" layoutY="14.0" onMouseClicked="#rowClicked" prefHeight="298.0" prefWidth="870.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 2; -fx-border-width: 2; -fx-background-radius: 3;">
             <columns>
@@ -136,7 +136,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <Button fx:id="updateButton" layoutX="782.0" layoutY="407.0" mnemonicParsing="false" onAction="#update" prefHeight="46.0" prefWidth="102.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 3; -fx-background-size: 2;" text="Update" textFill="#e8ffb6">
+      <Button fx:id="updateButton" layoutX="665.0" layoutY="407.0" mnemonicParsing="false" onAction="#update" prefHeight="46.0" prefWidth="102.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 3; -fx-background-size: 2;" text="Update" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>
@@ -144,7 +144,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button fx:id="insertButton" layoutX="665.0" layoutY="407.0" mnemonicParsing="false" onAction="#insert" prefHeight="46.0" prefWidth="102.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 2; -fx-background-size: 2;" text="Insert" textFill="#e8ffb6">
+      <Button fx:id="insertButton" layoutX="782.0" layoutY="407.0" mnemonicParsing="false" onAction="#insert" prefHeight="46.0" prefWidth="102.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 2; -fx-background-size: 2;" text="Add new" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>
@@ -232,7 +232,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <Button fx:id="deleatButton" layoutX="561.0" layoutY="407.0" mnemonicParsing="false" onAction="#deleat" prefHeight="46.0" prefWidth="90.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 2; -fx-background-size: 2;" text="Deleat" textFill="#e8ffb6">
+      <Button fx:id="deleatButton" layoutX="561.0" layoutY="407.0" mnemonicParsing="false" onAction="#deleat" prefHeight="46.0" prefWidth="90.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 2; -fx-background-size: 2;" text="Delete" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>

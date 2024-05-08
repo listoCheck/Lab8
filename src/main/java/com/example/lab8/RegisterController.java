@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lab5.Client.Client;
@@ -112,6 +113,10 @@ public class RegisterController {
     }
 
     private void updateLoginUsernamesAndPasswords() throws IOException {
+
+    }
+    @FXML
+    void loginEnter(KeyEvent event) {
 
     }
 

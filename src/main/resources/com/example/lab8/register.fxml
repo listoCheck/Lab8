@@ -37,7 +37,7 @@
         </StackPane.margin>
       </CheckBox>
     </StackPane>
-    <Button fx:id="logButton" onAction="#loginHandler" prefWidth="240" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2;" text="Login" textFill="#e8ffb6">
+    <Button fx:id="logButton" onAction="#loginHandler" onKeyPressed="#loginEnter" prefWidth="240" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2;" text="Login" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="12.0" />
          </font>
@@ -53,6 +53,6 @@
          </cursor></Button>
   </VBox>
    <effect>
-      <Bloom threshold="0.63" />
+      <Bloom threshold="0.67" />
    </effect>
 </VBox>
