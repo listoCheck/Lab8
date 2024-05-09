@@ -31,7 +31,9 @@ public class Client implements Serializable {
         int retries = 0;
         NewDragon newDragon = new NewDragon();
         boolean flag2 = false;
-        clientSocket = new Socket("localhost", 6789); // этой строкой мы запрашиваем
+        //clientSocket = new Socket("localhost", 6789); // этой строкой мы запрашиваем
+        //Client.in = new BufferedReader(new InputStreamReader(Client.clientSocket.getInputStream()));
+        //lient.out = new BufferedWriter(new OutputStreamWriter(Client.clientSocket.getOutputStream()));
         RegisterApplication registerApplication = new RegisterApplication();
         registerApplication.main();
     }

@@ -23,18 +23,24 @@ public class ComandCheck {
         }  if (id == 1) { // x
             try {
                 int x = (int) Double.parseDouble(data);
+                if (x < -330 || x > 330){
+                    return "Ошибка: значение x должно быть integer, где -330<=x<=330";
+                }
                 //System.out.println(x);
             } catch (NumberFormatException e) {
                 //System.out.println("значение x должно быть integer");
-                return "Ошибка: значение x должно быть integer";
+                return "Ошибка: значение x должно быть integer, где -330<=x<=330";
             }
         }  if (id == 2) { // y
             try {
                 int y = (int) Double.parseDouble(data);
                 //System.out.println(y);
+                if (y < -230 || y > 230){
+                    return "Ошибка: значение y должно быть integer, где -230<=y<=230";
+                }
             } catch (NumberFormatException e) {
-                System.out.println("значение y должно быть integer");
-                return "Ошибка: значение y должно быть integer";
+                System.out.println("значение y должно быть integer, где -230<=y<=230");
+                return "Ошибка: значение y должно быть integer, где -230<=y<=230";
             }
         }if (id == 4){ // age
             try {
