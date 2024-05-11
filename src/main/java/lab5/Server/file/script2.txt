@@ -1,0 +1,2 @@
+show
+execute C:\Users\admin\IdeaProjects\lab2sem\src\lab5\Server\file\script.txt

@@ -13,19 +13,22 @@ import java.sql.Statement;
 import java.util.*;
 
 import static java.util.Collections.max;
+import static lab5.Server.Test.connection;
 
 /**
  * Класс, в котором обрабатывается большинство команд, и записываются данные в файл
  */
-public class WriteFile implements Functional{
+public class WriteFile implements Functional {
     public ArrayList<String> pathes = new ArrayList<>();
     public static ResultSet resSet;
     public LinkedHashMap<Integer, String> dragons;
-    String[] content = {"name: ", "coordinate_x: ", "coordinate_y: ", "creationdate: ", "age: ", "color: ", "type: ", "character: ", "cave: ", "user: "};
+    private int maxId = 0;
+    String[] content = {"name: ", "coordinate_x: ", "coordinate_y: ", "creationdate: ", "age: ", "color: ", "type: ", "character: ", "cave: ", "user: ", ""};
     //String[] type_of_content = {"Введите имя дракона", "Координата х, где находится драков", "Координата у, где находится драков", "Вводится автоматически", "Возраст дракона, больший нуля", "Цвет дракона из предложенных: RED, YELLOW, BROWN", "Тип дракона из предложенных: WATER, UNDERGROUND, AIR, FIRE", "Какой Ваш дракон: CUNNING, EVIL, CHAOTIC_EVIL, FICKLE", "Глубина шахты, в которой обитает дракон, большая, либо равная нулю"};
     //Scanner sc = new Scanner(System.in);
     public final static WriteFile WRITE_FILE = new WriteFile();
     //ZonedDateTime currentTime = ZonedDateTime.now();
+
     /**
      * метод для чтения данных из xml файла
      */
@@ -35,30 +38,45 @@ public class WriteFile implements Functional{
         dragons = rf.readXml();
         //System.out.println(dragons);
     }
+
     /**
      * метда для команды clear
+     *
      * @param key
      */
     public void delDragon(ArrayList<Integer> key) throws SQLException {
-        for (Integer i : key){
-            if (dragons.get(i).split(",;;;,")[9].equals(Server.ClientHandler.socket())){
+        for (Integer i : key) {
+            if (dragons.get(i).split(",;;;,")[9].equals(Server.ClientHandler.socket())) {
                 dragons.remove(i);
             }
             Test.statmt.execute(("DELETE FROM Dragons WHERE id = " + i + " AND users = '" + Server.ClientHandler.socket() + "';"));
         }
-        //new Table().table(Test.connection, "Dragons");
+        if (dragons.isEmpty()) {
+            Test.statmt.execute("DROP TABLE Dragons;");
+            Test.statmt.execute("CREATE TABLE Dragons (id SERIAL PRIMARY KEY, name TEXT, coord_x TEXT, coord_y TEXT, creation_date TEXT, age TEXT, color TEXT, type TEXT, character TEXT, cave TEXT, users TEXT);");
+        }
+        if (dragons.isEmpty()) {
+            Test.statmt.execute("DROP TABLE Dragons;");
+            Test.statmt.execute("CREATE TABLE Dragons (id SERIAL PRIMARY KEY, name TEXT, coord_x TEXT, coord_y TEXT, creation_date TEXT, age TEXT, color TEXT, type TEXT, character TEXT, cave TEXT, users TEXT);");
+        }
     }
 
     /**
      * Метод удаляющий объекта дракона по ключу
+     *
      * @param key
      */
     public void delDragon(int key) throws SQLException {
-        if (dragons.get(key).split(",;;;,")[9].equals(Server.ClientHandler.socket())){
+        System.out.println(Server.ClientHandler.socket());
+        if (dragons.get(key).split(",;;;,")[9].equals(Server.ClientHandler.socket())) {
             dragons.remove(key);
         }
         Test.statmt.execute(("DELETE FROM Dragons WHERE id = " + key + " AND users = '" + Server.ClientHandler.socket() + "';"));
         //new Table().table(Test.connection, "Dragons");
+        if (dragons.isEmpty()) {
+            Test.statmt.execute("DROP TABLE Dragons;");
+            Test.statmt.execute("CREATE TABLE Dragons (id SERIAL PRIMARY KEY, name TEXT, coord_x TEXT, coord_y TEXT, creation_date TEXT, age TEXT, color TEXT, type TEXT, character TEXT, cave TEXT, users TEXT);");
+        }
     }
 
     public void insert(String string) throws SQLException {
@@ -67,29 +85,42 @@ public class WriteFile implements Functional{
         Dragon hf = new HandleFile().createObject(string.split(":::")[1]);
         //System.out.println("cladad");
         Integer maxkey;
-        if (keys.isEmpty()){
+        if (keys.isEmpty()) {
             maxkey = 0;
             //System.out.println(0);
-        }else{
+        } else {
             maxkey = max(keys);
             //System.out.println(maxkey);
         }
         //System.out.println(string.split(",;;;,")[9]);
-        if (string.contains("insert")){
+        if (string.contains("insert")) {
             //System.out.println(string.split(",;;;,")[9]);
+            //Test.statmt.execute("UPDATE Dragons SET position = id - (SELECT MIN(id) FROM queue);");
             Test.statmt.execute("INSERT INTO Dragons(name, coord_x, coord_y, creation_date, age, color, type, character, cave, users) VALUES ('" + hf.getName() + "', '" + hf.getCoordinates().getX() + "', '" + hf.getCoordinates().getY() + "', '" + hf.getCreationDate() + "', '" + hf.getAge() + "', '" + hf.getColor() + "', '" + hf.getType() + "', '" + hf.getCharacter() + "', '" + hf.getCave().getDepth() + "', '" + Server.ClientHandler.socket() + "');");
-            dragons.put(maxkey + 1, string.split(":::")[1] + ",;;;," + Server.ClientHandler.socket());
+            String query = "SELECT MAX(id) FROM Dragons;";
+            ResultSet resultSet = Test.statmt.executeQuery(query);
+            if (resultSet.next()) {
+                maxId = resultSet.getInt(1);
+                System.out.println("Максимальный id: " + maxId);
+            } else {
+                maxId = 1;
+            }
+            //System.out.println(Test.statmt.executeQuery("SELECT MAX(id) FROM Dragons;").getInt(1));
+            dragons.put(maxId, string.split(":::")[1]);
+            System.out.println(string.split(",;;;,")[9]);
             Server.out_to_client += "Дракон создан";
-        }else if(string.contains("update") && keys.contains(Integer.parseInt(string.split(" ")[1])) && string.split(",;;;,")[9].equals(Server.ClientHandler.socket())){
+        } else if (string.contains("update") && keys.contains(Integer.parseInt(string.split(" ")[1])) && string.split(",;;;,")[9].equals(Server.ClientHandler.socket())) {
             //System.out.println(string.split(",;;;,")[9]);
             dragons.remove(Integer.parseInt(string.split(" ")[1]));
             //Test.statmt.execute(("DELETE FROM Dragons WHERE id = " + Integer.parseInt(string.split(" ")[1])));
             dragons.put(Integer.parseInt(string.split(" ")[1]), string.split(":::")[1]);
+            System.out.println(string.split(" ")[1]);
             Test.statmt.execute("UPDATE Dragons SET name = '" + hf.getName() + "', coord_x = '" + hf.getCoordinates().getX() + "', coord_y = '" + hf.getCoordinates().getY() + "', creation_date = '" + hf.getCreationDate() + "', age = '" + hf.getAge() + "', color = '" + hf.getColor() + "', type = '" + hf.getType() + "', character = '" + hf.getCharacter() + "', cave = '" + hf.getCave().getDepth() + "', users = '" + Server.ClientHandler.socket() + "' WHERE id = " + string.split(" ")[1] + ";");
             //Server.out_to_client += dragons.get(Integer.parseInt(string.split(" ")[1]));
             System.out.println(dragons.get(Integer.parseInt(string.split(" ")[1])));
             Server.out_to_client += "Дракон создан";
-        }else{
+        } else {
+            System.out.println(Integer.parseInt(string.split(" ")[1]) + " " + string.split(",;;;,")[9] + " " + Server.ClientHandler.socket());
             Server.out_to_client += "Ошибка с индексом, дракон не создан, возможно он не принадлежит Вам((";
         }
         //new Table().table(Test.connection, "Dragon");
@@ -100,13 +131,18 @@ public class WriteFile implements Functional{
      */
     public void delDragon() throws SQLException {
         Set<Integer> keys = dragons.keySet();
-        for (Integer dragon : keys){
+        for (Integer dragon : keys) {
+            System.out.println(Server.ClientHandler.socket());
             //System.out.println(dragons.get(dragon).split(",;;;,")[9] + ":::" + Server.ClientHandler.socket());
-            if (dragons.get(dragon).split(",;;;,")[9].equals(Server.ClientHandler.socket())){
+            if (dragons.get(dragon).split(",;;;,")[9].equals(Server.ClientHandler.socket())) {
                 dragons.remove(dragon);
             }
         }
         Test.statmt.execute("DELETE FROM Dragons WHERE users = '" + Server.ClientHandler.socket() + "';");
+        if (dragons.isEmpty()) {
+            Test.statmt.execute("DROP TABLE Dragons;");
+            Test.statmt.execute("CREATE TABLE Dragons (id SERIAL PRIMARY KEY, name TEXT, coord_x TEXT, coord_y TEXT, creation_date TEXT, age TEXT, color TEXT, type TEXT, character TEXT, cave TEXT, users TEXT);");
+        }
     }
     /*
     /**
@@ -144,18 +180,22 @@ public class WriteFile implements Functional{
         System.out.println("Добавлен новый дракон " + key + " " + values.substring(0, values.length()-1));
     }
 */
+
     /**
      * метод для содания нового экземплярая дракона через txt файл
+     *
      * @param key
      * @param value
      */
     public void addNew(int key, String value) throws SQLException {
         Set<Integer> keys = dragons.keySet();
         Integer maxkey;
-        if (keys.isEmpty()){
+        if (keys.isEmpty()) {
             maxkey = 0;
-        }else{
+        } else {
             maxkey = max(keys);
+            maxId = Math.max(maxkey, maxId);
+            System.out.println(maxId);
         }
         //System.out.println("PLEASE");
         Dragon hf = new HandleFile().createObject(value);
@@ -182,38 +222,15 @@ public class WriteFile implements Functional{
             }
             Server.out_to_client += "::";
         }
-
-
-        /*
-        resSet = Test.statmt.executeQuery("SELECT * FROM Dragons");
-        int number_in_content = 0;
-        String dragonCh = "";
-        int user_id = 0;
-        while(resSet.first()) {
-            user_id = resSet.getInt("id");
-            dragonCh += resSet.getString("name") + ",;;;,";
-            dragonCh += resSet.getString("coord_x") + ",;;;,";
-            dragonCh += resSet.getString("coord_y") + ",;;;,";
-            dragonCh += resSet.getString("creation_date") + ",;;;,";
-            dragonCh += resSet.getString("age") + ",;;;,";
-            dragonCh += resSet.getString("color") + ",;;;,";
-            dragonCh += resSet.getString("type") + ",;;;,";
-            dragonCh += resSet.getString("character") + ",;;;,";
-            dragonCh += resSet.getString("cave") + ",;;;,";
-            dragonCh += resSet.getString("users") + ",;;;,";
-            Server.out_to_client += ("id: " + user_id);
-            for (String dragon_info : dragonCh.split(",;;;,")) {
-                Server.out_to_client += (", " + content[number_in_content] + dragon_info);
-                number_in_content++;
-            }
-            Server.out_to_client += "::";
-        }
-
-         */
+        //maxId = Math.max(maxId, Test.statmt.getGeneratedKeys().getInt(1));
+        //System.out.println("Максимальный id: " + maxId);
+        Server.out_to_client += "===" + maxId;
+        //System.out.println(maxId);
     }
 
     /**
      * метод для команды min_by_name
+     *
      * @param id
      */
 
@@ -231,6 +248,7 @@ public class WriteFile implements Functional{
 
     /**
      * метод для удаления предществующих и последствующих объектов
+     *
      * @param id
      * @param up
      */
@@ -239,7 +257,7 @@ public class WriteFile implements Functional{
         //System.out.println("remove");
         Set<Integer> keys = dragons.keySet();
         ArrayList<String> dragonstr = new ArrayList<>();
-        for (Integer key : keys){
+        for (Integer key : keys) {
             dragonstr.add(dragons.get(key));
         }
         Test.statmt.execute("DELETE FROM Dragons WHERE users = '" + Server.ClientHandler.socket() + "';");
@@ -250,18 +268,18 @@ public class WriteFile implements Functional{
             //System.out.println("remove1");
             for (Integer key : keys) {
                 Dragon d = new HandleFile().createObject(",;;;," + dragons.get(key));
-                Test.statmt.execute("INSERT INTO Dragons(name, coord_x, coord_y, creation_date, age, color, type, character, cave, users) VALUES ('" + d.getName() + "', '" + d.getCoordinates().getX() + "', '" + d.getCoordinates().getY() + "', '" + d.getCreationDate() + "', '" + d.getAge() + "', '" + d.getColor() + "', '" + d.getType() + "', '" + d.getCharacter()+"', '"+d.getCave().getDepth()+"', '" + Server.ClientHandler.socket()+"');");
+                Test.statmt.execute("INSERT INTO Dragons(name, coord_x, coord_y, creation_date, age, color, type, character, cave, users) VALUES ('" + d.getName() + "', '" + d.getCoordinates().getX() + "', '" + d.getCoordinates().getY() + "', '" + d.getCreationDate() + "', '" + d.getAge() + "', '" + d.getColor() + "', '" + d.getType() + "', '" + d.getCharacter() + "', '" + d.getCave().getDepth() + "', '" + Server.ClientHandler.socket() + "');");
             }
-        }else {
+        } else {
             dragonstr.removeIf(element -> element.length() < l);
             dragons.entrySet().removeIf(entry -> entry.getValue().length() < l && entry.getValue().split(",;;;,")[9].equals(Server.ClientHandler.socket()));
             for (Integer key : keys) {
                 Dragon d = new HandleFile().createObject(",;;;," + dragons.get(key));
-                Test.statmt.execute("INSERT INTO Dragons(name, coord_x, coord_y, creation_date, age, color, type, character, cave, users) VALUES ('" + d.getName() + "', '" + d.getCoordinates().getX() + "', '" + d.getCoordinates().getY() + "', '" + d.getCreationDate() + "', '" + d.getAge() + "', '" + d.getColor() + "', '" + d.getType() + "', '" + d.getCharacter()+"', '"+d.getCave().getDepth()+"', '" + Server.ClientHandler.socket()+"');");
+                Test.statmt.execute("INSERT INTO Dragons(name, coord_x, coord_y, creation_date, age, color, type, character, cave, users) VALUES ('" + d.getName() + "', '" + d.getCoordinates().getX() + "', '" + d.getCoordinates().getY() + "', '" + d.getCreationDate() + "', '" + d.getAge() + "', '" + d.getColor() + "', '" + d.getType() + "', '" + d.getCharacter() + "', '" + d.getCave().getDepth() + "', '" + Server.ClientHandler.socket() + "');");
             }
         }
         //new Table().table(Test.connection, "Dragons");
-        for (String i : dragonstr){
+        for (String i : dragonstr) {
             System.out.println(i + " " + i.length());
             Server.out_to_client += (i + " " + i.length()) + "::";
         }
@@ -269,6 +287,7 @@ public class WriteFile implements Functional{
 
     /**
      * метод для удаления объектов меньших, чем данный
+     *
      * @param id
      */
     public void dragonsWhoNeedToDel(int id) throws SQLException {
@@ -362,6 +381,7 @@ public class WriteFile implements Functional{
 
     /**
      * метод для сортировки по типу или персонажу, от большего к меньшему
+     *
      * @param trash
      * @return sorted
      */
@@ -371,16 +391,16 @@ public class WriteFile implements Functional{
         int x = 4;
         while (x > 1)
             for (int i = 1; i <= 3; i++) {
-                int first = trash.get(sort.get(i-1));
+                int first = trash.get(sort.get(i - 1));
                 int second = trash.get(sort.get(i));
                 System.out.println(trash + " :: " + sort);
                 if (first >= second) {
                     System.out.println(x);
                     x--;
-                }else{
-                    String f = sort.get(i-1);
+                } else {
+                    String f = sort.get(i - 1);
                     String s = sort.get(i);
-                    sort.set(i-1, s);
+                    sort.set(i - 1, s);
                     sort.set(i, f);
                 }
             }
@@ -429,7 +449,7 @@ public class WriteFile implements Functional{
         for (Integer key : keys) {
             //System.out.println(dragons.get(key));
             Dragon d = new HandleFile().createObject(dragons.get(key));
-            Test.statmt.execute("INSERT INTO Dragons(name, coord_x, coord_y, creation_date, age, color, type, character, cave) VALUES ('" + d.getName() + "', '" + d.getCoordinates().getX() + "', '" + d.getCoordinates().getY() + "', '" + d.getCreationDate() + "', '" + d.getAge() + "', '" + d.getColor() + "', '" + d.getType() + "', '" + d.getCharacter() + "', '" + d.getCave().getDepth()+"', '" + dragons.get(key).split(",;;;,")[9]+"');");
+            Test.statmt.execute("INSERT INTO Dragons(name, coord_x, coord_y, creation_date, age, color, type, character, cave) VALUES ('" + d.getName() + "', '" + d.getCoordinates().getX() + "', '" + d.getCoordinates().getY() + "', '" + d.getCreationDate() + "', '" + d.getAge() + "', '" + d.getColor() + "', '" + d.getType() + "', '" + d.getCharacter() + "', '" + d.getCave().getDepth() + "', '" + dragons.get(key).split(",;;;,")[9] + "');");
         }
         Server.out_to_client += ("файл сохранен\n");
     }

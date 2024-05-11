@@ -1,10 +1,9 @@
 package com.example.lab8;
 
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -15,17 +14,13 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import lab5.Client.Client;
 import lab5.Client.Types.ComandCheck;
 import lab5.Client.Types.Dragon;
 import lab5.Client.Types.MyObject;
 import lab5.Client.Types.NewDragon;
-import lab5.Server.commands.Command;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -34,23 +29,18 @@ import java.net.SocketException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import static java.lang.Math.max;
-import static java.lang.Math.pow;
-
 public class TableController {
     @FXML
     private TextField commandText;
-    ZonedDateTime currentTime = ZonedDateTime.now();
+    public static ZonedDateTime currentTime = ZonedDateTime.now();
     @FXML
     private TableColumn<Dragon, Integer> idColumn;
     @FXML
@@ -130,7 +120,6 @@ public class TableController {
     @FXML
     private TextField typeField;
 
-
     @FXML
     private Button updateButton;
 
@@ -143,13 +132,33 @@ public class TableController {
     private Map<String, Integer> pointXCoordinates = new HashMap<>();
     private Map<String, Integer> pointYCoordinates = new HashMap<>();
     private Map<String, Color> userColors = new HashMap<>();
+    @FXML
+    private TextField helpField1;
+
     private int maxNumber = 0;
     private int co = 1;
     private String userClicked = "";
     private String serverout;
     public static ScheduledExecutorService executor;
+    @FXML
+    private ComboBox<String> comboBox;
+    private void setText() {
+        submitButton.setText(Client.bundle.getString("Submit"));
+        updateButton.setText(Client.bundle.getString("Update"));
+        deleatButton.setText(Client.bundle.getString("Delete"));
+        insertButton.setText(Client.bundle.getString("Add_new"));
+        drawTable.setText(Client.bundle.getString("Draw"));
+        helpField.setText(Client.bundle.getString("Введите_'help',_чтобы_узнать_возможные_команды"));
+        serverOut.setText(Client.bundle.getString("Server_answer"));
+        commandText.setPromptText(Client.bundle.getString("Command"));
+        helpField1.setText(Client.bundle.getString("Если_вдруг_все_объекты_коллекцие_исчезли,_то_просто_нажмите_кнопку_отправить"));
+    }
 
     public void initialize() throws IOException {
+        comboBox.setValue("Select language");
+        ObservableList<String> list = FXCollections.observableArrayList("Русский", "Islenska", "Български", "Canadian English");
+        comboBox.setItems(list);
+        setText();
         tableView.getItems().clear();
         userField.setText("User: " + Client.login);
         idColumn.setCellValueFactory(new PropertyValueFactory<Dragon, Integer>("id"));
@@ -190,14 +199,47 @@ public class TableController {
                 Client.out.write("show\n");
                 Client.out.flush();
                 String serverout1 = Client.in.readLine();
-                if (!serverout1.equals(serverout)) initialize();
+                if (!serverout1.equals(serverout)) apdateTable();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }, initialDelay, period, TimeUnit.SECONDS);
 
     }
-
+    private void apdateTable() throws IOException {
+        tableView.getItems().clear();
+        userField.setText("User: " + Client.login);
+        idColumn.setCellValueFactory(new PropertyValueFactory<Dragon, Integer>("id"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<Dragon, String>("name"));
+        xCorColumn.setCellValueFactory(new PropertyValueFactory<Dragon, Double>("x"));
+        yCorColumn.setCellValueFactory(new PropertyValueFactory<Dragon, Double>("y"));
+        creationDateColumn.setCellValueFactory(new PropertyValueFactory<Dragon, String>("date"));
+        ageColumn.setCellValueFactory(new PropertyValueFactory<Dragon, Integer>("age"));
+        colorColumn.setCellValueFactory(new PropertyValueFactory<Dragon, String>("color"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<Dragon, String>("type"));
+        characterColumn.setCellValueFactory(new PropertyValueFactory<Dragon, String>("character"));
+        caveColumn.setCellValueFactory(new PropertyValueFactory<Dragon, Integer>("cave"));
+        userColumn.setCellValueFactory(new PropertyValueFactory<Dragon, String>("user"));
+        Client.out.write("show\n");
+        Client.out.flush();
+        serverout = Client.in.readLine();
+        if (serverout.isEmpty()){
+            new RegisterApplication().main();
+        }
+        System.out.println(serverout);
+        System.out.println(serverout.split("===")[1]);
+        //addPoint(userField.getText(), Color.GREEN, 0, 0);
+        maxNumber = Integer.parseInt(serverout.split("===")[1]);
+        for (String i : serverout.split("===")[0].split("::")) {
+            System.out.println(i);
+            if (!i.isEmpty()) {
+                Dragon dragon = makeDragon(i);
+                ObservableList<Dragon> customers = tableView.getItems();
+                customers.add(dragon);
+                tableView.setItems(customers);
+            }
+        }
+    }
     private Dragon makeDragon(String data) {
         Integer id = Integer.valueOf(data.split(" ")[1].split(",")[0]);
         String name = (data.split(", ")[1].split(": ")[1]);
@@ -259,7 +301,7 @@ public class TableController {
             drawPoint(gc, color, x, y, scene, colorUser, id.split(":")[0]);
         }
         //drawAnimation(gc, 0, 0);
-        initialize();
+        //initialize();
     }
 
 
@@ -306,7 +348,7 @@ public class TableController {
             MyObject obj = new MyObject(word);
             NewDragon newDragon = new NewDragon();
             if (word.contains("insert") || word.contains("update")|| word.contains("save")) {
-                serverOut.setText("Эти команды реализованы в графическом интерфейсе, пожалуйста поьзуйтесь кнопками");
+                serverOut.setText(Client.bundle.getString("Эти_команды_реализованы_в_графическом_интерфейсе,_пожалуйста_поьзуйтесь_кнопками"));
             } else if ((word.contains("exit_server") && Client.admin)) {
                 Client.out.write(obj.getName() + "\n");
                 Client.out.flush();
@@ -330,13 +372,18 @@ public class TableController {
                 new RegisterController().loginHandler(event);
             } else {
                 String answer = "";
-                answer += ("Ответ сервера: \n"); // получив - выводим на экран
+                answer +=Client.bundle.getString("Ответ_сервера") + '\n'; // получив - выводим на экран
                 if (serverWord.contains("===")){
                     serverWord = serverWord.split("===")[0];
                 }
                 for (String i : serverWord.split("::")) {
-                    //System.out.println(i);
-                    answer += i + '\n';
+                    System.out.println(i);
+                    if (i.contains(": ") && i.contains("_") && !i.contains("YELLOW") && !i.contains("BROWN") && !i.contains("RED")){
+                        answer += i.split(": ")[0] + ": " + Client.bundle.getString(i.split(": ")[1]) + '\n';
+                    }else{
+                        answer += i + '\n';
+                    }
+
                 }
                 serverOut.setText(answer);
             }
@@ -387,24 +434,28 @@ public class TableController {
 
     @FXML
     void rowClicked(MouseEvent event) {
-        Dragon clickedDragon = tableView.getSelectionModel().getSelectedItem();
-        idField.setText(String.valueOf(clickedDragon.getId()));
-        nameField.setText(String.valueOf(clickedDragon.getName()));
-        xFileld.setText(String.valueOf((int) Double.parseDouble(String.valueOf(clickedDragon.getX()))));
-        yField.setText(String.valueOf((int) Double.parseDouble(String.valueOf(clickedDragon.getY()))));
-        ageField.setText(String.valueOf(clickedDragon.getAge()));
-        colorField.setText(String.valueOf(clickedDragon.getColor()));
-        typeField.setText(String.valueOf(clickedDragon.getType()));
-        characterField.setText(String.valueOf(clickedDragon.getCharacter()));
-        caveField.setText(String.valueOf(clickedDragon.getCave()));
-        userClicked = clickedDragon.getUser();
-        String[] content = {"ID: ", "name: ", "x: ", "y: ", "creationdate: ", "age: ", "color: ", "type: ", "character: ", "cave: ", "user"};
-        String[] type_of_content = {"Вводится автоматически", "Введите имя дракона", "Координата х, где находится драков, где -350<=x<=350", "Координата у, где находится драков, где -250<=y<=250", "Вводится автоматически", "Возраст дракона, больший нуля", "Цвет дракона из предложенных: RED, YELLOW, BROWN", "Тип дракона из предложенных: WATER, UNDERGROUND, AIR, FIRE", "Какой Ваш дракон: CUNNING, EVIL, CHAOTIC_EVIL, FICKLE", "Глубина шахты, в которой обитает дракон, большая, либо равная нулю"};
-        String answer = "";
-        for (int i = 0; i <= 9; i++) {
-            answer += content[i] + type_of_content[i] + '\n';
+        try {
+            Dragon clickedDragon = tableView.getSelectionModel().getSelectedItem();
+            idField.setText(String.valueOf(clickedDragon.getId()));
+            nameField.setText(String.valueOf(clickedDragon.getName()));
+            xFileld.setText(String.valueOf((int) Double.parseDouble(String.valueOf(clickedDragon.getX()))));
+            yField.setText(String.valueOf((int) Double.parseDouble(String.valueOf(clickedDragon.getY()))));
+            ageField.setText(String.valueOf(clickedDragon.getAge()));
+            colorField.setText(String.valueOf(clickedDragon.getColor()));
+            typeField.setText(String.valueOf(clickedDragon.getType()));
+            characterField.setText(String.valueOf(clickedDragon.getCharacter()));
+            caveField.setText(String.valueOf(clickedDragon.getCave()));
+            userClicked = clickedDragon.getUser();
+            String[] content = {"ID: ", "name: ", "x: ", "y: ", "creationdate: ", "age: ", "color: ", "type: ", "character: ", "cave: ", "user"};
+            String[] type_of_content = {"Вводится_автоматически", "Введите_имя_дракона", "Координата_х,_где_находится_драков,_где_-330⩽x⩽330", "Координата_у,_где_находится_драков,_где_-200⩽y⩽200", "Вводится_автоматически", "Возраст_дракона,_больший_нуля", "Цвет_дракона_из_предложенных_RED,_YELLOW,_BROWN", "Тип_дракона_из_предложенных_WATER,_UNDERGROUND,_AIR,_FIRE", "Какой_Ваш_дракон_CUNNING,_EVIL,_CHAOTIC_EVIL,_FICKLE", "Глубина_шахты,_в_которой_обитает_дракон,_большая,_либо_равная_нулю"};
+            String answer = "";
+            for (int i = 0; i <= 9; i++) {
+                answer += content[i] + Client.bundle.getString(type_of_content[i]) + '\n';
+            }
+            serverOut.setText(answer);
+        }catch (NullPointerException e){
+            System.out.println("этот прицел просто имба");
         }
-        serverOut.setText(answer);
     }
 
     @FXML
@@ -437,7 +488,7 @@ public class TableController {
         String message = "";
         for (String part : insert_dragon.split(",")) {
             String output = new ComandCheck().check(i, part);
-            if (output.contains("Ошибка: ")) {
+            if (output.contains("Ошибка!")) {
                 message += output + '\n';
             }
             i++;
@@ -446,7 +497,7 @@ public class TableController {
             serverOut.setText(message);
         }else {
             Dragon dragon = new Dragon(++maxNumber, nameField.getText(), Double.parseDouble(xFileld.getText()), Double.parseDouble(yField.getText()), currentTime.toString(), Integer.parseInt(ageField.getText()), colorField.getText(), typeField.getText(), characterField.getText(), Integer.parseInt(caveField.getText()), Client.login);
-            serverOut.setText("Все окей");
+            serverOut.setText(Client.bundle.getString("Все_окей"));
             String values = "";
             for (i = 0; i <= 8; i++) {
                 if (i == 1 || i == 2)
@@ -486,13 +537,13 @@ public class TableController {
         String message = "";
         for (String part : insert_dragon.split(",")) {
             String output = new ComandCheck().check(i, part);
-            if (output.contains("Ошибка: ")) {
+            if (output.contains("Ошибка!")) {
                 message += output + '\n';
             }
             i++;
         }
-        if (message.isEmpty()) serverOut.setText("Все окей");
-        else serverOut.setText(message);
+        if (message.isEmpty()) serverOut.setText(Client.bundle.getString("Все_окей"));
+        else serverOut.setText(Client.bundle.getString(message));
         String values = "";
         for (i = 0; i <= 8; i++) {
             values += insert_dragon.split(",")[i] + ",;;;,";
@@ -502,7 +553,7 @@ public class TableController {
             //System.out.println("update " + idField.getText()+ " :::" + values + Client.login + "\n");
             Client.out.flush();
             String server = Client.in.readLine();
-            serverOut.setText(server);
+            serverOut.setText(Client.bundle.getString(server));
             ObservableList<Dragon> customers = tableView.getItems();
             if (dragon.getUser().equals(Client.login)) {
                 customers.removeIf(drag -> drag.getId() == Integer.parseInt(idField.getText()));
@@ -525,7 +576,7 @@ public class TableController {
             }
             addPoint(dragon.getUser(), Color.valueOf(colorField.getText()), (int) (Double.parseDouble(String.valueOf(xFileld.getText()))), (int) (Double.parseDouble(String.valueOf(yField.getText()))));
         }else{
-            serverOut.setText("Вы не можете это изменять, потому что это не ваш дракон");
+            serverOut.setText(Client.bundle.getString("Вы_не_можете_это_изменять,_потому_что_это_не_ваш_дракон"));
         }
     }
 
@@ -547,6 +598,8 @@ public class TableController {
             Client.out.write("remove " + idField.getText() + '\n');
             Client.out.flush();
             System.out.println(Client.in.readLine());
+        }else{
+            serverOut.setText(Client.bundle.getString("Вы_не_можете_это_изменять,_потому_что_это_не_ваш_дракон"));
         }
         tableView.refresh();
 
@@ -555,10 +608,10 @@ public class TableController {
     @FXML
     void fieldClicked(MouseEvent event) {
         String[] content = {"ID: ", "name: ", "x: ", "y: ", "creationdate: ", "age: ", "color: ", "type: ", "character: ", "cave: ", "user"};
-        String[] type_of_content = {"Вводится автоматически", "Введите имя дракона", "Координата х, где находится драков", "Координата у, где находится драков", "Вводится автоматически", "Возраст дракона, больший нуля", "Цвет дракона из предложенных: RED, YELLOW, BROWN", "Тип дракона из предложенных: WATER, UNDERGROUND, AIR, FIRE", "Какой Ваш дракон: CUNNING, EVIL, CHAOTIC_EVIL, FICKLE", "Глубина шахты, в которой обитает дракон, большая, либо равная нулю"};
+        String[] type_of_content = {"Вводится_автоматически", "Введите_имя_дракона", "Координата_х,_где_находится_драков,_где_-330⩽x⩽330", "Координата_у,_где_находится_драков,_где_-200⩽y⩽200", "Вводится_автоматически", "Возраст_дракона,_больший_нуля", "Цвет_дракона_из_предложенных_RED,_YELLOW,_BROWN", "Тип_дракона_из_предложенных_WATER,_UNDERGROUND,_AIR,_FIRE", "Какой_Ваш_дракон_CUNNING,_EVIL,_CHAOTIC_EVIL,_FICKLE", "Глубина_шахты,_в_которой_обитает_дракон,_большая,_либо_равная_нулю"};
         String answer = "";
         for (int i = 0; i <= 9; i++) {
-            answer += content[i] + type_of_content[i] + '\n';
+            answer += content[i] + Client.bundle.getString(type_of_content[i]) + '\n';
         }
         serverOut.setText(answer);
     }
@@ -566,5 +619,45 @@ public class TableController {
     @FXML
     void refresh(ActionEvent event) throws IOException {
         System.exit(0);
+    }
+    @FXML
+    void changeLanguage(ActionEvent event) throws IOException {
+        Client.language = comboBox.getSelectionModel().getSelectedItem();
+        langChoice(Client.language);
+    }
+
+    void langChoice(String lang) throws IOException {
+        try {
+            //System.out.println(lang);
+            switch (lang) {
+                case "Русский":
+                    Client.bundle = ResourceBundle.getBundle("login_ru_RU", new Locale("ru", "RU"));
+                    comboBox.setPromptText("Русский");
+                    ZoneId zone = ZoneId.of("Europe/Moscow");
+                    currentTime = ZonedDateTime.now(zone);
+                    break;
+                case "Islenska":
+                    Client.bundle = ResourceBundle.getBundle("login", new Locale("is"));
+                    comboBox.setPromptText("Islenska");
+                    zone = ZoneId.of("Iceland");
+                    currentTime = ZonedDateTime.now(zone);
+                    break;
+                case "Български":
+                    Client.bundle = ResourceBundle.getBundle("login", new Locale("bg"));
+                    comboBox.setPromptText("Български");
+                    zone = ZoneId.of("Europe/Zaporozhye");
+                    currentTime = ZonedDateTime.now(zone);
+                    break;
+                case "Canadian English":
+                    Client.bundle = ResourceBundle.getBundle("login", new Locale("en", "CA"));
+                    comboBox.setPromptText("Canadian English");
+                    zone = ZoneId.of("Canada/Yukon");
+                    currentTime = ZonedDateTime.now(zone);
+                    break;
+            }
+        } catch (NullPointerException e) {
+            System.out.println(e);
+        }
+        setText();
     }
 }

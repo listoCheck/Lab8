@@ -2,6 +2,7 @@
 
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
@@ -10,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="pane" maxHeight="670.0" maxWidth="900.0" minHeight="668.0" minWidth="900.0" prefHeight="670.0" prefWidth="900.0" style="-fx-background-color: #046611; -fx-border-color: #09ff00;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab8.TableController">
+<AnchorPane fx:id="pane" maxHeight="670.0" maxWidth="903.0" minHeight="668.0" minWidth="900.0" prefHeight="670.0" prefWidth="903.0" style="-fx-background-color: #046611; -fx-border-color: #09ff00;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab8.TableController">
     <children>
         <TableView fx:id="tableView" layoutX="10.0" layoutY="31.0" onMouseClicked="#rowClicked" prefHeight="298.0" prefWidth="879.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 2; -fx-border-width: 2; -fx-background-radius: 3;">
             <columns>
@@ -38,12 +39,12 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <TextField fx:id="commandText" layoutX="19.0" layoutY="474.0" prefHeight="46.0" prefWidth="228.0" promptText="Command" style="-fx-background-color: #034A0C; -fx-border-color: #09ff00; -fx-border-insets: 0; -fx-border-radius: 3; -fx-border-width: 2; -fx-text-fill: #e8ffb6;">
+      <TextField fx:id="commandText" layoutX="8.0" layoutY="474.0" prefHeight="46.0" prefWidth="239.0" promptText="Command" style="-fx-background-color: #034A0C; -fx-border-color: #09ff00; -fx-border-insets: 0; -fx-border-radius: 3; -fx-border-width: 2; -fx-text-fill: #e8ffb6;">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>
       </TextField>
-      <Button fx:id="submitButton" layoutX="144.0" layoutY="535.0" mnemonicParsing="false" onAction="#submit" prefHeight="46.0" prefWidth="102.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 3; -fx-background-size: 2;" text="Submit" textFill="#e8ffb6">
+      <Button fx:id="submitButton" layoutX="124.0" layoutY="535.0" mnemonicParsing="false" onAction="#submit" prefHeight="46.0" prefWidth="122.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 3; -fx-background-size: 2;" text="Submit" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>
@@ -51,7 +52,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <TextField fx:id="userField" editable="false" layoutX="19.0" layoutY="599.0" prefHeight="46.0" prefWidth="228.0" promptText="user" style="-fx-background-color: #9dff70; -fx-background-radius: 3;">
+      <TextField fx:id="userField" editable="false" layoutX="8.0" layoutY="599.0" prefHeight="46.0" prefWidth="239.0" promptText="user" style="-fx-background-color: #9dff70; -fx-background-radius: 3;">
          <font>
             <Font name="Consolas Bold" size="15.0" />
          </font>
@@ -64,7 +65,7 @@
             <Font name="Consolas Bold" size="12.0" />
          </font>
       </TextArea>
-      <Button fx:id="drawTable" layoutX="19.0" layoutY="536.0" mnemonicParsing="false" onAction="#draw" prefHeight="46.0" prefWidth="102.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 3; -fx-background-size: 2;" text="Draw" textFill="#e8ffb6">
+      <Button fx:id="drawTable" layoutX="8.0" layoutY="536.0" mnemonicParsing="false" onAction="#draw" prefHeight="46.0" prefWidth="111.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 3; -fx-background-size: 2;" text="Draw" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>
@@ -136,7 +137,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <Button fx:id="updateButton" layoutX="669.0" layoutY="417.0" mnemonicParsing="false" onAction="#update" prefHeight="46.0" prefWidth="102.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 3; -fx-background-size: 2;" text="Update" textFill="#e8ffb6">
+      <Button fx:id="updateButton" layoutX="643.0" layoutY="417.0" mnemonicParsing="false" onAction="#update" prefHeight="46.0" prefWidth="122.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 3; -fx-background-size: 2;" text="Update" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>
@@ -144,7 +145,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button fx:id="insertButton" layoutX="786.0" layoutY="417.0" mnemonicParsing="false" onAction="#insert" prefHeight="46.0" prefWidth="102.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 2; -fx-background-size: 2;" text="Add new" textFill="#e8ffb6">
+      <Button fx:id="insertButton" layoutX="777.0" layoutY="417.0" mnemonicParsing="false" onAction="#insert" prefHeight="46.0" prefWidth="111.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 2; -fx-background-size: 2;" text="Add new" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>
@@ -160,7 +161,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <TextField fx:id="helpField1" alignment="CENTER" editable="false" layoutX="11.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="ID">
+      <TextField fx:id="ID" alignment="CENTER" editable="false" layoutX="11.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="ID">
          <font>
             <Font name="Consolas Bold" size="15.0" />
          </font>
@@ -168,7 +169,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <TextField fx:id="helpField11" alignment="CENTER" editable="false" layoutX="93.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="Name">
+      <TextField fx:id="Name" alignment="CENTER" editable="false" layoutX="93.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="Name">
          <font>
             <Font name="Consolas Bold" size="15.0" />
          </font>
@@ -176,7 +177,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <TextField fx:id="helpField111" alignment="CENTER" editable="false" layoutX="193.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="X">
+      <TextField fx:id="X" alignment="CENTER" editable="false" layoutX="193.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="X">
          <font>
             <Font name="Consolas Bold" size="15.0" />
          </font>
@@ -184,7 +185,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <TextField fx:id="helpField112" alignment="CENTER" editable="false" layoutX="293.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="Y">
+      <TextField fx:id="Y" alignment="CENTER" editable="false" layoutX="293.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="Y">
          <font>
             <Font name="Consolas Bold" size="15.0" />
          </font>
@@ -192,7 +193,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <TextField fx:id="helpField113" alignment="CENTER" editable="false" layoutX="384.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="Age">
+      <TextField fx:id="Age" alignment="CENTER" editable="false" layoutX="384.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="Age">
          <font>
             <Font name="Consolas Bold" size="15.0" />
          </font>
@@ -200,7 +201,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <TextField fx:id="helpField114" alignment="CENTER" editable="false" layoutX="476.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="Color">
+      <TextField fx:id="Color" alignment="CENTER" editable="false" layoutX="476.0" layoutY="330.0" prefHeight="23.0" prefWidth="66.0" promptText="Введите 'help', чтобы узнать возможные команды" style="-fx-background-color: #046611; -fx-background-radius: 3;" text="Color">
          <font>
             <Font name="Consolas Bold" size="15.0" />
          </font>
@@ -232,7 +233,7 @@
             <Cursor fx:constant="DISAPPEAR" />
          </cursor>
       </TextField>
-      <Button fx:id="deleatButton" layoutX="565.0" layoutY="417.0" mnemonicParsing="false" onAction="#deleat" prefHeight="46.0" prefWidth="90.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 2; -fx-background-size: 2;" text="Delete" textFill="#e8ffb6">
+      <Button fx:id="deleatButton" layoutX="516.0" layoutY="417.0" mnemonicParsing="false" onAction="#deleat" prefHeight="46.0" prefWidth="111.0" style="-fx-background-color: #3B9A48; -fx-border-color: #09ff00; -fx-border-radius: 3; -fx-border-width: 2; -fx-background-radius: 2; -fx-background-size: 2;" text="Delete" textFill="#e8ffb6">
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font>
@@ -245,9 +246,18 @@
             <Font name="Consolas Bold" size="10.0" />
          </font>
          <cursor>
-            <Cursor fx:constant="HAND" />
+            <Cursor fx:constant="CROSSHAIR" />
          </cursor>
       </Button>
+      <ComboBox fx:id="comboBox" layoutX="18.0" layoutY="4.0" onAction="#changeLanguage" prefWidth="150.0" promptText="Select Language" style="-fx-background-color: #046611; -fx-font-family: consolas; -fx-border-color: #e8ffb6;" />
+      <TextField fx:id="helpField1" editable="false" layoutX="190.0" layoutY="6.0" prefHeight="20.0" prefWidth="641.0" promptText="Если вдруг все объекты коллекцие исчезли, то просто нажмите кнопку отправить" style="-fx-background-color: #046611; -fx-background-radius: 3;">
+         <font>
+            <Font name="Consolas Bold" size="10.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="DISAPPEAR" />
+         </cursor>
+      </TextField>
     </children>
    <effect>
       <Glow level="0.12" />

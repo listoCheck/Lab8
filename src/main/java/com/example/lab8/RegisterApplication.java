@@ -16,9 +16,11 @@ public class RegisterApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(RegisterApplication.class.getResource("register.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 440, 400);
         //stage.initStyle(StageStyle.UNDECORATED);
-        stage.setTitle("Registration");
+        stage.setTitle(Client.bundle.getString("Registration"));
         stage.setScene(scene);
         stage.setResizable(false);
+        //stage.initStyle(StageStyle.UNDECORATED);
+        //stage.setOnCloseRequest(e -> RegisterController.executor.shutdown());
         stage.show();
 
     }

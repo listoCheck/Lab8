@@ -4,6 +4,8 @@ import com.example.lab8.RegisterApplication;
 import lab5.Client.Types.MyObject;
 import lab5.Client.Types.NewDragon;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.io.*;
 import java.net.Socket;
@@ -23,6 +25,8 @@ public class Client implements Serializable {
     public static int retries = 0;
     public static boolean retry = false;
     public static String zapros = "";
+    public static String language = "Русский";
+    public static ResourceBundle bundle;
     public static String register() throws IOException {
         return (command + " " + login + " " + password);
     }
@@ -31,9 +35,21 @@ public class Client implements Serializable {
         int retries = 0;
         NewDragon newDragon = new NewDragon();
         boolean flag2 = false;
-        //clientSocket = new Socket("localhost", 6789); // этой строкой мы запрашиваем
-        //Client.in = new BufferedReader(new InputStreamReader(Client.clientSocket.getInputStream()));
-        //lient.out = new BufferedWriter(new OutputStreamWriter(Client.clientSocket.getOutputStream()));
+        //System.out.println(Locale.getDefault());
+
+        //for (Locale loc : Locale.getAvailableLocales()){
+        //    System.out.println(loc);
+        //}
+        //Locale loc = new Locale.Builder().setLanguage("ru").setRegion("RU").build();
+        bundle = ResourceBundle.getBundle("login");
+        //System.out.println(bundle_ru.getString("somevalue"));
+        /*
+        ResourceBundle bundle_ru = ResourceBundle.getBundle("login_ru", new Locale("ru", "RU"));
+        ResourceBundle bundle_en_ca = ResourceBundle.getBundle("login_en_ca", new Locale("en", "CA"));
+        ResourceBundle bundle_bg = ResourceBundle.getBundle("login_bg", new Locale("bg", "BG"));
+        ResourceBundle bundle_is = ResourceBundle.getBundle("login_is", new Locale("is", "IS"));
+
+         */
         RegisterApplication registerApplication = new RegisterApplication();
         registerApplication.main();
     }

@@ -1,0 +1,12 @@
+insert 4445
+Fafa
+123321
+4
+45
+RED
+WATER
+EVIL
+1000
+show
+execute_script C:\Users\admin\IdeaProjects\lab2sem\src\lab5\file\script2.txt
+exit

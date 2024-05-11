@@ -32,7 +32,7 @@ public class Server {
         log = new FileWriter("C:\\Users\\admin\\IdeaProjects\\lab2sem\\src\\lab5\\Server\\log.txt", true);
         loadUsers();
         try {
-            server = new ServerSocket(45000); // серверсокет прослушивает порт 45000
+            server = new ServerSocket(6789); // серверсокет прослушивает порт 45000
             System.out.println("Сервер запущен!");
             log.write("Сервер запущен!" + "\n");
 
@@ -78,6 +78,7 @@ public class Server {
             this.processingThreadPool = processingThreadPool;
             this.sendingThreadPool = sendingThreadPool;
             System.out.println("Клиент подключился по сокету: " + socket.getPort());
+            System.out.println(logins.get(String.valueOf(clientSocket.getPort())));
             try {
                 log.write("Клиент подключился по сокету: " + socket.getPort() + "\n");
                 log.flush();
@@ -87,6 +88,7 @@ public class Server {
         }
         public static String socket(){
             //System.out.println(logins.get(String.valueOf(clientSocket.getPort())));
+            System.out.println(logins.get(String.valueOf(clientSocket.getPort())));
             return logins.get(String.valueOf(clientSocket.getPort()));
         }
         @Override
@@ -100,6 +102,7 @@ public class Server {
                     String command = parts[0];
                     String login = parts[1];
                     String password = hashPassword(parts[2]);
+
                     if (command.equals("register")) {
                         if (!users.containsKey(login)) {
                             out.write("Пользователь успешно зарегистрирован\n");
@@ -111,14 +114,14 @@ public class Server {
                             out.write("Пользователь с этим логином уже зарегистрирован\n");
                             out.flush();
                             System.out.println("Пользователь с этим логином уже зарегистрирован");
-                            return;
+                            //return;
                         }
                     } else if (command.equals("login")&& !logins.containsValue(login)) { //
                         if (!authenticateUser(login, password)) {
                             out.write("Аутентификация провалена\n");
                             out.flush();
                             System.out.println("Аутентификация провалена");
-                            return;
+                            //return;
                         } else {
                             logins.put(String.valueOf(clientSocket.getPort()), login);
                             System.out.println(logins);
@@ -127,6 +130,7 @@ public class Server {
                         }
                     }else {
                         out.write("Добро пожаловать на сервер\n");
+                        logins.put(String.valueOf(clientSocket.getPort()), login);
                         out.flush();
                         //out.write("такой пользователь уже занят, \n");
                         //out.flush();
@@ -143,8 +147,8 @@ public class Server {
                     String finalWord = word;
                     if (word.equals("exit_server") || word.equals("exit")) {
                         System.out.println(logins);
-                        String value = logins.get(String.valueOf(clientSocket.getPort()));
-                        logins.remove(String.valueOf(clientSocket.getPort()), value);
+                        //String value = logins.get(String.valueOf(clientSocket.getPort()));
+                        //logins.remove(String.valueOf(clientSocket.getPort()), value);
                         System.out.println("Клиент отключился");
                         log.write("Клиент отключился\n");
                         System.out.println(finalWord);
